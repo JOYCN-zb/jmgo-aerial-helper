@@ -1,5 +1,7 @@
 # jmgo-aerial-helper
 
+> 本项目不是 Aerial 官方项目，和 Aerial 作者无关，也不包含 Aerial 的代码，只是配合 [Aerial](https://github.com/pengchujin/aerial-tv) 使用。Aerial 相关的问题请到 [Aerial 仓库](https://github.com/pengchujin/aerial-tv/issues) 反馈，辅助应用的问题请在本仓库提 issue。
+
 坚果投影上配合 [Aerial](https://github.com/pengchujin/aerial-tv) 使用的小辅助应用（包名 `app.kiro.aerialboot`，显示名「Aerial 开机修复」）。它解决了三个问题，这些问题 Aerial 本身在坚果固件上还处理不了：
 
 1. **重启后黑屏或停在原桌面**：开机时 Aerial 按组件名启动，会落进普通（standard）任务，坚果固件会把这种任务的图层一直藏起来，导致 Aerial 拿不到焦点，反复无响应。辅助应用改用主页（HOME）方式拉起 Aerial，画面就正常了。详见 [aerial-tv#986](https://github.com/pengchujin/aerial-tv/issues/986)。
