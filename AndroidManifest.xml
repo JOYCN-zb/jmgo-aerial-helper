@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Aerial 开机修复：开机、待机唤醒、被坚果强制结束后，重新绑定守护并以 HOME 方式拉起 Aerial；并把 Aerial 亮度条转接到坚果光源亮度 -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="app.kiro.aerialboot"
+    android:versionCode="5"
+    android:versionName="1.4">
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+
+    <application android:label="Aerial 开机修复" android:allowBackup="false">
+        <receiver android:name=".BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+        <!-- 手动触发入口，只有持有 DUMP 权限的调用方（adb shell）能发 -->
+        <receiver android:name=".ManualReceiver" android:exported="true"
+            android:permission="android.permission.DUMP">
+            <intent-filter>
+                <action android:name="app.kiro.aerialboot.FIX" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".FixService" android:exported="false" />
+        <!-- 通知监听服务：被强制结束后系统会重新绑定它，借此在待机唤醒后恢复 -->
+        <service android:name=".KeeperService" android:exported="true"
+            android:label="Aerial 开机修复"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
