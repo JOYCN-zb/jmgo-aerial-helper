@@ -41,6 +41,10 @@ public class FixService extends Service {
     private boolean launchedThisRound = false;
     /** 前台已是 Aerial 时，只在一轮开始后这段时间内允许拉起（毫秒） */
     private static final long AERIAL_RELAUNCH_WINDOW = 12000;
+    /** 视为「刚开机」的系统运行时长（毫秒） */
+    private static final long BOOT_WINDOW = 5 * 60 * 1000L;
+    /** 查询前台事件的回溯时长（毫秒）：要覆盖用户长时间停留在一个应用里的情况 */
+    private static final long EVENT_LOOKBACK = 24 * 60 * 60 * 1000L;
 
     static void start(Context context, String reason) {
         try {
@@ -78,7 +82,14 @@ public class FixService extends Service {
     private void check() {
         ensureGuardBound();
         String top = topPackage();
-        if (top != null && !HOMES.contains(top)) {
+        if (top == null) {
+            // 读不到前台时不能当成「停在桌面」：用户长时间停留在某个应用里，同样可能读不到。
+            // 只有刚开机（系统运行不到 5 分钟）时才按桌面处理。
+            if (SystemClock.elapsedRealtime() > BOOT_WINDOW) {
+                Log.i(TAG, "读不到前台应用，不打扰");
+                return;
+            }
+        } else if (!HOMES.contains(top)) {
             Log.i(TAG, "前台是 " + top + "，不打扰");
             return;
         }
@@ -146,7 +157,7 @@ public class FixService extends Service {
         try {
             UsageStatsManager usm = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
             long now = System.currentTimeMillis();
-            UsageEvents events = usm.queryEvents(now - 10 * 60 * 1000L, now);
+            UsageEvents events = usm.queryEvents(now - EVENT_LOOKBACK, now);
             UsageEvents.Event e = new UsageEvents.Event();
             String last = null;
             while (events.hasNextEvent()) {
