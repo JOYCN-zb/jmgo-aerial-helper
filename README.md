@@ -30,7 +30,7 @@
 从 [Releases](../../releases) 下载 `aerialbootfix-<版本>.apk`，核对 SHA-256 后执行：
 
 ```sh
-adb install -r aerialbootfix-1.4.apk
+adb install -r aerialbootfix-1.5.apk
 
 # 授权：后台启动界面（拉起 Aerial 用）
 adb shell appops set app.kiro.aerialboot SYSTEM_ALERT_WINDOW allow
@@ -58,6 +58,8 @@ adb uninstall app.kiro.aerialboot
   - 前台是坚果原桌面：用主页方式拉起 Aerial。
   - 前台已经是 Aerial：每轮最多拉起一次，并且只在开始后的 12 秒内。之后不再拉起，避免打断你在 Aerial 里的操作。
   - 前台是其他应用：不打扰。
+  - 读不到前台：不打扰。只有系统刚开机不到 5 分钟时，才按停在原桌面处理。
+- **怎么判断前台**：从系统的应用使用记录里，找最近 24 小时内最后一个切到前台的应用。
 - **亮度转接**：监听 `Settings.Global.picture_backlight`（0 到 100）。值变化时按坚果的 10 档换算（0、11、22 … 88、100），通过 Binder 发给坚果光机服务。只在值变化时下发，开机时不会改你的光源亮度。
 
 ### 用到的坚果未公开接口
